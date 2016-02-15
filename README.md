@@ -2,7 +2,7 @@
 
 Overall Query executes faster if we use ForkJoinPool
 
-ForkJoinPool performs much better than Sequential Search when data size is large (> 15k)
+ForkJoinPool performs much better than Sequential Search when data size is large (> 15k) , otherwise the latency difference not very significant.
 
 #### Test Case 
 
@@ -15,11 +15,12 @@ https://github.com/data-mining/forkjoin/blob/master/src/com/workday/analytics/te
 
 (3) externalize the actual RANGE_QUERY and execute dynamically inside the QueryTask
 
-#### Assumptions
+#### Design decisions
 (1) added a SearchStrategy Enum to effectively compare performance between Sequential and Parallel Search
+ 
+(2) added ConcurrentSkipListSet while storing Ids so that we don't encounter COncurrentModification Exception.
 
-#### Thread-safety
-(1) added ConcurrentSkipListSet while storing Ids so that we don't encounter COncurrentModification Exception.
+(3) RangeContainerImpl and IdsImpl are mostly immutable and not visible by clients (class is final, contructor private, scope is default)
 
 #### Results of Query Execution
 
