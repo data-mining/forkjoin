@@ -3,6 +3,12 @@
 Overall Query executes faster if we use ForkJoinPool
 ForkJoinPool performs much better than Sequential Search when data size is large (> 15k)
 
+Test Case : https://github.com/data-mining/forkjoin/blob/master/src/com/workday/analytics/test/RangeContainerTest.java
+
+Todo - assert Parallel Search -  Latency for larger data size is greater than latency of Sequential Search
+
+Assumptions : (1) added a SearchStrategy Enum to effectively compare performance between Sequential and Parallel Search
+
 ///////////////////////////
 ForkJoinPool Size = 4
 Data Size = 32k
