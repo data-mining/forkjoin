@@ -17,15 +17,12 @@ import com.workday.search.exceptions.InvalidIdListException;
 /**
  * @author kaniska_mac
  * This Class executes Query depending upon the Search Strategy
- * For parallel Execution, it 
+ * For parallel Execution, it submits a Recursive Query to a ForkJoinPool of <#PROCESSOR> number of threads.
  */
 final class RangeContainerImpl implements RangeContainer {
 
 	private static int CHUNK_SIZE;
-
 	private final long[] m_data;
-
-	//
 	
 
 	static RangeContainer buildContainer(long[] data) throws IdOutOfRangeException {
@@ -63,6 +60,13 @@ final class RangeContainerImpl implements RangeContainer {
 		}
 	}
 
+	/**
+	 * 
+	 * @param RANGE_START
+	 * @param RANGE_END
+	 * @return
+	 * @throws InvalidIdListException
+	 */
 	private Ids searchSequentially(long RANGE_START, long RANGE_END) throws InvalidIdListException {
 		short high = (short) (m_data.length - 1);
 		short low = 0;
@@ -78,6 +82,13 @@ final class RangeContainerImpl implements RangeContainer {
 		return new IdsImpl(result);
 	}
 
+	/**
+	 * 
+	 * @param RANGE_START
+	 * @param RANGE_END
+	 * @return
+	 * @throws Exception
+	 */
 	private Ids searchParallelly(long RANGE_START, long RANGE_END) throws Exception {
 		int processors = Runtime.getRuntime().availableProcessors();
 
@@ -98,11 +109,14 @@ final class RangeContainerImpl implements RangeContainer {
 
 	}
 
+	/**
+	 * Simple Query Task is divided into smaller sub-sets of data recursively and once data-size < CHUNK_SIZE 
+	 * @author kaniska_mac
+	 *
+	 */
 	private static class QueryTask extends RecursiveAction {
 
 		private static final long serialVersionUID = 67781993370162624L;
-
-		// private final int N;
 
 		short low;
 		short high;
@@ -112,6 +126,16 @@ final class RangeContainerImpl implements RangeContainer {
 
 		private ArrayList<Short> result;
 
+		/**
+		 * Recursive Query 
+		 * 
+		 * @param m_data
+		 * @param SRCH_IDX_START
+		 * @param SRCH_IDX_END
+		 * @param SRCH_VAL_START
+		 * @param SRCH_VAL_END
+		 * @param p_result
+		 */
 		private QueryTask(long[] m_data, short SRCH_IDX_START,
 				short SRCH_IDX_END, long SRCH_VAL_START, long SRCH_VAL_END,
 				ArrayList<Short> p_result) {
@@ -125,7 +149,8 @@ final class RangeContainerImpl implements RangeContainer {
 		}
 
 		/**
-		 * @return int
+		 * Result - holds the list of employee ids matching the query condition
+		 * @return
 		 */
 		public ArrayList<Short> getResult() {
 			return this.result;
@@ -135,12 +160,12 @@ final class RangeContainerImpl implements RangeContainer {
 		protected void compute() {
 			if (high - low <= CHUNK_SIZE) {
 				for (short i = low; i < high; i++) {
+					//Execute the Business Logic - Find the Employee Ids whose salary falls between given range
 					if (array[i] > search_range_start
 							&& array[i] < search_range_end) {
 						result.add(i);
 					}
 				}
-				// sum;
 			} else {
 				short mid = (short) (low + (high - low) / 2);
 				QueryTask left = new QueryTask(array, low, mid,

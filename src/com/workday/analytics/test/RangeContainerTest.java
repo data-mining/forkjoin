@@ -58,7 +58,7 @@ public class RangeContainerTest {
 					break;
 				} else {
 					count++;
-					// System.out.print(data[idx]+" ,");
+					//System.out.print(idx+" ,");
 				}
 			}
 			System.out.println(" Result Size :" + count);
@@ -94,7 +94,7 @@ public class RangeContainerTest {
 					break;
 				} else {
 					count++;
-					// System.out.print(data[idx]+" ,");
+					//System.out.print(idx+" ,");
 				}
 			}
 			System.out.println(" Result Size :" + count);
