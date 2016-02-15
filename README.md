@@ -11,6 +11,8 @@ Todo - (1) assert Parallel Search -  Latency for larger data size is greater tha
 
 Assumptions : (1) added a SearchStrategy Enum to effectively compare performance between Sequential and Parallel Search
 
+Thread-safety :  Added ConcurrentSkipListSet while storing Ids so that we don't encounter COncurrentModification Exception.
+
 ///////////////////////////
 
 ForkJoinPool Size = 4
